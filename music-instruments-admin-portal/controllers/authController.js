@@ -201,7 +201,7 @@ exports.login = async (req, res) => {
         // Store user as logged in (if using sessions, replace this with session logic)
         global.currentUser = user;
         // On successful login, pass success message to the view
-        res.redirect('/dashboard?success=Login successful!');
+        res.redirect('/?success=Login successful!');
     } catch (error) {
         console.error("Error logging in:", error);
         res.status(500).render('auth/login', { 
