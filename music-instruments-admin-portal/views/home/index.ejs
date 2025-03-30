@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .tab-content { margin-top: 20px; }
+        .card { box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1); }
+        .action-buttons { display: flex; justify-content: space-between; }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">Home</h2>
+
+        <!-- Success and Error Messages -->
+        <% if (error) { %>
+            <div class="alert alert-danger"><%= error %></div>
+        <% } %>
+        <% if (success) { %>
+            <div class="alert alert-success"><%= success %></div>
+        <% } %>
+
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-tabs" id="homeTabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#products-tab">Products</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#categories-tab">Categories</a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <!-- Products Tab -->
+            <div class="tab-pane fade show active" id="products-tab">
+                <h4 class="mt-3">All Products</h4>
+                <a href="/products" class="btn btn-primary mb-3">Add New Product</a>
+                <div class="row">
+                    <% products.forEach(product => { %>
+                        <div class="col-md-4 mb-3">
+                            <div class="card p-3">
+                                <img src="<%= product.image %>" class="img-fluid" alt="<%= product.name %>">
+                                <h5 class="mt-2"><%= product.name %></h5>
+                                <p>Category: <%= product.category.name %></p>
+                                <p>Price: $<%= product.price.toFixed(2) %></p>
+                                <div class="action-buttons">
+                                    <a href="/products/edit/<%= product._id %>" class="btn btn-warning btn-sm">Edit</a>
+                                    <a href="/products/delete/<%= product._id %>" class="btn btn-danger btn-sm">Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+
+            <!-- Categories Tab -->
+            <div class="tab-pane fade" id="categories-tab">
+                <h4 class="mt-3">All Categories</h4>
+                <a href="/categories" class="btn btn-primary mb-3">Add New Category</a>
+                <div class="row">
+                    <% categories.forEach(category => { %>
+                        <div class="col-md-4 mb-3">
+                            <div class="card p-3">
+                                <img src="<%= category.image %>" class="img-fluid" alt="<%= category.name %>">
+                                <h5 class="mt-2"><%= category.name %></h5>
+                                <p><%= category.description %></p>
+                                <div class="action-buttons">
+                                    <a href="/categories/edit/<%= category._id %>" class="btn btn-warning btn-sm">Edit</a>
+                                    <a href="/categories/delete/<%= category._id %>" class="btn btn-danger btn-sm">Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

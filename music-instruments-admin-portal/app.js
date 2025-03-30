@@ -47,6 +47,9 @@ app.get('/dashboard', (req, res) => {
     }
     res.render('dashboard', { title: 'Admin Dashboard', user: global.currentUser });
 });
+//home page
+const homeRoutes = require('./routes/homeRoutes');
+app.use('/', homeRoutes);
 
 // category page
 const categoryRoutes = require('./routes/categoryRoutes');
