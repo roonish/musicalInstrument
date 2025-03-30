@@ -48,6 +48,10 @@ app.get('/dashboard', (req, res) => {
     res.render('dashboard', { title: 'Admin Dashboard', user: global.currentUser });
 });
 
+// other page routes
+const categoryRoutes = require('./routes/categoryRoutes');
+app.use('/categories', categoryRoutes);
+
 // Start the server
 const port = 3000;
 app.listen(port, () => {
