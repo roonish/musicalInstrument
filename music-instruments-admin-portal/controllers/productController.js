@@ -5,7 +5,7 @@ const Category = require('../models/categorymodel');
 exports.getProductPage = async (req, res) => {
     try {
         const products = await Product.find().populate('category');
-        const categories = await Category.find(); // Fetch categories for dropdown
+        const categories = await Category.find();
         res.render('product/index', { 
             title: 'Products', 
             products,
@@ -27,18 +27,18 @@ exports.getProductPage = async (req, res) => {
 // Add New Product
 exports.addProduct = async (req, res) => {
     try {
-        const { name, description, category, quantity, price } = req.body;
+        const { name, description, category, quantity, price, image } = req.body;
 
-        if (!name || !category || !quantity || !price) {
+        if (!name || !category || !quantity || !price || !image) {
             return res.redirect('/products?error=All fields are required!');
         }
 
-        const newProduct = new Product({ name, description, category, quantity, price });
+        const newProduct = new Product({ name, description, category, quantity, price, image });
         await newProduct.save();
         
         res.redirect('/products?success=Product added successfully!');
     } catch (error) {
-        res.status(500).redirect('/products?error=Error adding product');
+        res.redirect('/products?error=Error adding product');
     }
 };
 
@@ -65,8 +65,9 @@ exports.getEditProductPage = async (req, res) => {
 // Update Product
 exports.updateProduct = async (req, res) => {
     try {
-        const { name, description, category, quantity, price } = req.body;
-        await Product.findByIdAndUpdate(req.params.id, { name, description, category, quantity, price });
+        const { name, description, category, quantity, price, image } = req.body;
+
+        await Product.findByIdAndUpdate(req.params.id, { name, description, category, quantity, price, image });
         res.redirect('/products?success=Product updated successfully');
     } catch (error) {
         res.redirect(`/products/edit/${req.params.id}?error=Error updating product`);
@@ -79,6 +80,6 @@ exports.deleteProduct = async (req, res) => {
         await Product.findByIdAndDelete(req.params.id);
         res.redirect('/products?success=Product deleted!');
     } catch (error) {
-        res.status(500).redirect('/products?error=Error deleting product');
+        res.redirect('/products?error=Error deleting product');
     }
 };
