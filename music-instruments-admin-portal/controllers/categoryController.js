@@ -7,8 +7,10 @@ exports.getCategoryPage = async (req, res) => {
         res.render('category/index', { 
             title: 'Categories', 
             categories,
-            error: req.query.error || null,  // Ensure error is always passed
-            success: req.query.success || null // Ensure success is always passed
+            // Ensure error is always passed
+            error: req.query.error || null,  
+            // Ensure success is always passed
+            success: req.query.success || null 
         });
     } catch (error) {
         res.status(500).render('category/index', { 
@@ -60,11 +62,14 @@ exports.getEditCategoryPage = async (req, res) => {
 // Update Category
 exports.updateCategory = async (req, res) => {
     try {
-        const { name, image, description } = req.body; // Destructure to include description
-        await Category.findByIdAndUpdate(req.params.id, { name, image, description }); // Update all fields
-        res.redirect('/categories?success=Category updated successfully'); // Redirect with success message
+        const { name, image, description } = req.body; 
+        // Update all fields
+        await Category.findByIdAndUpdate(req.params.id, { name, image, description }); 
+        // Redirect with success message
+        res.redirect('/categories?success=Category updated successfully'); 
     } catch (error) {
-        res.redirect(`/categories/edit/${req.params.id}?error=Error updating category`); // Redirect with error message
+        // Redirect with error message
+        res.redirect(`/categories/edit/${req.params.id}?error=Error updating category`); 
     }
 };
 
