@@ -3,134 +3,685 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products</title>
+    <title>Products | Music Instruments Admin</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #1cc88a;
+            --background-color: #f8f9fc;
+            --card-bg: #ffffff;
+            --text-primary: #5a5c69;
+            --text-secondary: #858796;
+        }
+        
+        body {
+            background-color: var(--background-color);
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: var(--text-primary);
+        }
+        
+        .navbar-admin {
+            background-color: white;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #224abe 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+        
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d3e2;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.25);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
         .product-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s ease-in-out;
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            transition: all 0.3s ease;
+            height: 100%;
         }
+        
         .product-card:hover {
-            transform: scale(1.02);
+            transform: translateY(-5px);
+            box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.15);
         }
-        .product-image {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 5px;
+        
+        .product-img {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            position: relative;
         }
+        
+        .out-of-stock-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
         .action-buttons {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .product-card:hover .action-buttons {
+            opacity: 1;
+        }
+        
+        .action-btn {
+            width: 38px;
+            height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: white;
+            color: var(--text-primary);
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .action-btn.edit-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .action-btn.delete-btn:hover {
+            background-color: #e74a3b;
+            color: white;
+        }
+        
+        .price-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .category-badge {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .product-content {
+            padding: 1.25rem;
+        }
+        
+        .product-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        .product-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .product-meta {
             display: flex;
             justify-content: space-between;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
         }
-        .filter-sidebar {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 5px;
+        
+        .search-bar {
+            position: relative;
+        }
+        
+        .search-bar .form-control {
+            padding-left: 2.5rem;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+        
+        .filter-toggle {
+            cursor: pointer;
+        }
+        
+        .filter-section {
+            transition: all 0.3s ease;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+        }
+        
+        .filter-section.show {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        #productPreview {
+            width: 100%;
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border: 2px dashed #d1d3e2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+        
+        .scroll-to-top {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .scroll-to-top.show {
+            opacity: 1;
+        }
+        
+        @media (max-width: 767.98px) {
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+        
+        .highlight {
+            background: rgba(255, 255, 0, 0.3);
         }
     </style>
 </head>
-<body>
-    <div class="container mt-5">
-        <h2 class="text-center">Products</h2>
 
-        <% if (typeof error !== "undefined" && error) { %>
-            <div class="alert alert-danger mb-4"><%= error %></div>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-admin sticky-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand fw-bold text-primary" href="/">
+                <i class="bi bi-music-note-beamed me-2"></i>Music Instruments Admin
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAdmin">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarAdmin">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/products">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/categories">Categories</a>
+                    </li>
+                    <% if (global.currentUser) { %>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle me-1"></i><%= global.currentUser.firstName %>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="/logout"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                            </ul>
+                        </li>
+                    <% } else { %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/login">Login</a>
+                        </li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container py-4">
+        <!-- Page Header -->
+        <div class="page-header d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="fw-bold mb-0">Products</h1>
+                <p class="mb-0">Manage music instruments in your inventory</p>
+            </div>
+            <button class="btn btn-light" type="button" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                <i class="bi bi-plus-circle me-1"></i> Add Product
+            </button>
+        </div>
+
+        <!-- Success and Error Messages -->
+        <% if (error) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         <% } %>
         
-        <% if (typeof success !== "undefined" && success) { %>
-            <div class="alert alert-success mb-4"><%= success %></div>
+        <% if (success) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <%= success %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         <% } %>
 
-        <div class="row">
-            <!-- Sidebar for Filtering -->
-            <aside class="col-md-3">
-                <div class="filter-sidebar">
-                    <h5>Filter Products</h5>
-                    <hr>
-                    <label class="form-label">Sort By:</label>
-                    <select class="form-select">
-                        <option>Name (A-Z)</option>
-                        <option>Name (Z-A)</option>
-                        <option>Price (Low to High)</option>
-                        <option>Price (High to Low)</option>
-                    </select>
-                    <hr>
-                    <label class="form-label">Category</label>
-                    <% categories.forEach(category => { %>
-                        <div>
-                            <input type="checkbox" id="<%= category._id %>"> 
-                            <label for="<%= category._id %>"><%= category.name %></label>
+        <!-- Search and Filter Section -->
+        <div class="card">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <div class="search-bar">
+                            <i class="bi bi-search search-icon"></i>
+                            <input type="text" class="form-control" id="searchProducts" placeholder="Search products...">
                         </div>
-                    <% }) %>
-                </div>
-            </aside>
-
-            <!-- Main Content Area -->
-            <div class="col-md-9">
-                <!-- Add Product Form -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-body">
-                        <h4 class="text-center mb-3">Add New Product</h4>
-                        <form action="/products/add" method="POST">
-                            <div class="mb-3">
-                                <label class="form-label">Product Name</label>
-                                <input type="text" name="name" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Description</label>
-                                <textarea name="description" class="form-control" rows="2"></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Category</label>
-                                <select name="category" class="form-select">
-                                    <% categories.forEach(category => { %>
-                                        <option value="<%= category._id %>"><%= category.name %></option>
-                                    <% }) %>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Quantity</label>
-                                <input type="number" name="quantity" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Price</label>
-                                <input type="number" name="price" step="0.01" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Image URL</label>
-                                <input type="url" name="image" class="form-control" placeholder="https://example.com/image.jpg" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">Add Product</button>
-                        </form>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-center">
+                        <div class="filter-toggle d-flex align-items-center ms-auto" id="filterToggle">
+                            <i class="bi bi-funnel me-2"></i> Filters
+                            <i class="bi bi-chevron-down ms-2"></i>
+                        </div>
                     </div>
                 </div>
+                
+                <div class="filter-section" id="filterSection">
+                    <hr>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Category</label>
+                            <select class="form-select" id="filterCategory">
+                                <option value="">All Categories</option>
+                                <% categories.forEach(category => { %>
+                                    <option value="<%= category._id %>"><%= category.name %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Price Range</label>
+                            <select class="form-select" id="filterPrice">
+                                <option value="">All Prices</option>
+                                <option value="0-100">$0 - $100</option>
+                                <option value="100-500">$100 - $500</option>
+                                <option value="500-1000">$500 - $1000</option>
+                                <option value="1000+">$1000+</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Sort By</label>
+                            <select class="form-select" id="sortProducts">
+                                <option value="nameAsc">Name (A-Z)</option>
+                                <option value="nameDesc">Name (Z-A)</option>
+                                <option value="priceLow">Price (Low to High)</option>
+                                <option value="priceHigh">Price (High to Low)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                <!-- Products Grid View -->
-                <div class="row">
-                    <% products.forEach(product => { %>
-                        <div class="col-md-4 mb-4">
-                            <div class="product-card">
-                                <img src="<%= product.image %>" alt="<%= product.name %>" class="product-image">
-                                <h5 class="mt-3"><%= product.name %></h5>
-                                <p class="text-muted">Category: <%= product.category.name %></p>
-                                <p class="text-muted">Quantity: <%= product.quantity %></p>
-                                <p class="text-muted">Price: $<%= product.price.toFixed(2) %></p>
-                                <div class="action-buttons">
-                                    <a href="/products/edit/<%= product._id %>" class="btn btn-warning btn-sm">Edit</a>
-                                    <a href="/products/delete/<%= product._id %>" class="btn btn-danger btn-sm">Delete</a>
+        <!-- Products Grid -->
+        <div class="product-grid" id="productsContainer">
+            <% products.forEach(product => { %>
+                <div class="product-card" 
+                     data-product-name="<%= product.name.toLowerCase() %>"
+                     data-product-category="<%= product.category._id %>"
+                     data-product-price="<%= product.price %>">
+                    <div class="product-img" style="background-image: url('<%= product.image %>');">
+                        <div class="price-badge">$<%= product.price.toFixed(2) %></div>
+                        <div class="category-badge"><%= product.category.name %></div>
+                        <% if (product.quantity <= 0) { %>
+                            <div class="out-of-stock-overlay">Out of Stock</div>
+                        <% } %>
+                    </div>
+                    <div class="action-buttons">
+                        <a href="/products/edit/<%= product._id %>" class="action-btn edit-btn text-decoration-none">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="/products/delete/<%= product._id %>" class="action-btn delete-btn text-decoration-none" onclick="return confirm('Are you sure you want to delete this product? This action cannot be undone.')">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </div>
+                    <div class="product-content">
+                        <h5 class="product-title"><%= product.name %></h5>
+                        <p class="product-desc"><%= product.description || 'No description available.' %></p>
+                        <div class="product-meta">
+                            <span><i class="bi bi-box me-1"></i> Stock: <%= product.quantity %></span>
+                            <span><i class="bi bi-tag me-1"></i> ID: <%= product._id.toString().slice(-4) %></span>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+
+        <!-- Empty State -->
+        <% if (products.length === 0) { %>
+            <div class="text-center py-5">
+                <div class="mb-3">
+                    <i class="bi bi-music-note-list" style="font-size: 4rem; opacity: 0.3;"></i>
+                </div>
+                <h4>No Products Found</h4>
+                <p class="text-muted">Get started by adding your first product.</p>
+                <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                    <i class="bi bi-plus-circle me-1"></i> Add Product
+                </button>
+            </div>
+        <% } %>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="/products/add" method="POST">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div id="productPreview">
+                                    <span>Image Preview</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Product Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="image" class="form-label">Image URL</label>
+                                    <input type="text" class="form-control" id="image" name="image" required onchange="updateProductPreview(this.value)">
                                 </div>
                             </div>
                         </div>
-                    <% }) %>
-                </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="category" class="form-label">Category</label>
+                                    <select name="category" id="category" class="form-select" required>
+                                        <option value="">Select a category</option>
+                                        <% categories.forEach(category => { %>
+                                            <option value="<%= category._id %>"><%= category.name %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="price" class="form-label">Price ($)</label>
+                                    <input type="number" class="form-control" id="price" name="price" step="0.01" min="0" required>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="quantity" class="form-label">Quantity</label>
+                                    <input type="number" class="form-control" id="quantity" name="quantity" min="0" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Product</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
+    <!-- Footer -->
+    <footer class="bg-white py-4 mt-auto">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between small">
+                <div class="text-muted">Copyright &copy; Music Instruments Admin 2025</div>
+                <div>
+                    <a href="#" class="text-decoration-none text-muted">Privacy Policy</a>
+                    &middot;
+                    <a href="#" class="text-decoration-none text-muted">Terms &amp; Conditions</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll to top button -->
+    <a class="scroll-to-top" href="#" id="scrollToTop">
+        <i class="bi bi-arrow-up"></i>
+    </a>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Filter toggle functionality
+        const filterToggle = document.getElementById('filterToggle');
+        const filterSection = document.getElementById('filterSection');
+        
+        filterToggle.addEventListener('click', function() {
+            filterSection.classList.toggle('show');
+            this.querySelector('.bi-chevron-down').classList.toggle('bi-chevron-up');
+        });
+        
+        // Image preview functionality
+        function updateProductPreview(url) {
+            const preview = document.getElementById('productPreview');
+            if (url) {
+                preview.style.backgroundImage = `url(${url})`;
+                preview.innerHTML = '';
+            } else {
+                preview.style.backgroundImage = 'none';
+                preview.innerHTML = '<span>Image Preview</span>';
+            }
+        }
+        
+        // Products filtering and search functionality
+        const searchInput = document.getElementById('searchProducts');
+        const categoryFilter = document.getElementById('filterCategory');
+        const priceFilter = document.getElementById('filterPrice');
+        const sortSelect = document.getElementById('sortProducts');
+        const productsContainer = document.getElementById('productsContainer');
+        const productCards = document.querySelectorAll('.product-card');
+        
+        function filterProducts() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const categoryValue = categoryFilter.value;
+            const priceValue = priceFilter.value;
+            
+            productCards.forEach(card => {
+                const productName = card.getAttribute('data-product-name');
+                const productCategory = card.getAttribute('data-product-category');
+                const productPrice = parseFloat(card.getAttribute('data-product-price'));
+                
+                let showBySearch = true;
+                let showByCategory = true;
+                let showByPrice = true;
+                
+                // Search filter
+                if (searchTerm) {
+                    showBySearch = productName.includes(searchTerm);
+                    
+                    // If the product matches the search, highlight the matching text
+                    if (showBySearch) {
+                        // Clear previous highlights
+                        const title = card.querySelector('.product-title');
+                        title.innerHTML = title.textContent;
+                        
+                        // Add new highlight
+                        if (title) {
+                            const regex = new RegExp(searchTerm, 'gi');
+                            title.innerHTML = title.textContent.replace(
+                                regex, 
+                                match => `<span class="highlight">${match}</span>`
+                            );
+                        }
+                    }
+                }
+                
+                // Category filter
+                if (categoryValue) {
+                    showByCategory = productCategory === categoryValue;
+                }
+                
+                // Price filter
+                if (priceValue) {
+                    if (priceValue === '0-100') {
+                        showByPrice = productPrice >= 0 && productPrice <= 100;
+                    } else if (priceValue === '100-500') {
+                        showByPrice = productPrice > 100 && productPrice <= 500;
+                    } else if (priceValue === '500-1000') {
+                        showByPrice = productPrice > 500 && productPrice <= 1000;
+                    } else if (priceValue === '1000+') {
+                        showByPrice = productPrice > 1000;
+                    }
+                }
+                
+                // Show/hide card based on all filters
+                if (showBySearch && showByCategory && showByPrice) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // Sort functionality
+        function sortProducts() {
+            const sortValue = sortSelect.value;
+            const productsArray = Array.from(productCards);
+            
+            productsArray.sort((a, b) => {
+                const nameA = a.getAttribute('data-product-name');
+                const nameB = b.getAttribute('data-product-name');
+                const priceA = parseFloat(a.getAttribute('data-product-price'));
+                const priceB = parseFloat(b.getAttribute('data-product-price'));
+                
+                if (sortValue === 'nameAsc') {
+                    return nameA.localeCompare(nameB);
+                } else if (sortValue === 'nameDesc') {
+                    return nameB.localeCompare(nameA);
+                } else if (sortValue === 'priceLow') {
+                    return priceA - priceB;
+                } else if (sortValue === 'priceHigh') {
+                    return priceB - priceA;
+                }
+            });
+            
+            productsArray.forEach(card => {
+                productsContainer.appendChild(card);
+            });
+        }
+        
+        // Add event listeners
+        searchInput.addEventListener('input', filterProducts);
+        categoryFilter.addEventListener('change', filterProducts);
+        priceFilter.addEventListener('change', filterProducts);
+        sortSelect.addEventListener('change', function() {
+            sortProducts();
+            filterProducts(); // Re-apply filters after sorting
+        });
+        
+        // Scroll to top functionality
+        const scrollToTopBtn = document.getElementById('scrollToTop');
+        
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 100) {
+                scrollToTopBtn.classList.add('show');
+            } else {
+                scrollToTopBtn.classList.remove('show');
+            }
+        });
+        
+        scrollToTopBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    </script>
 </body>
 </html>

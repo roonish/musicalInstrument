@@ -3,114 +3,518 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Categories</title>
+    <title>Categories | Music Instruments Admin</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #1cc88a;
+            --background-color: #f8f9fc;
+            --card-bg: #ffffff;
+            --text-primary: #5a5c69;
+            --text-secondary: #858796;
+        }
+        
+        body {
+            background-color: var(--background-color);
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: var(--text-primary);
+        }
+        
+        .navbar-admin {
+            background-color: white;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #159a6a 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+        
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d3e2;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.25rem rgba(28, 200, 138, 0.25);
+        }
+        
+        .btn-success {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        
         .category-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s ease-in-out;
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            transition: all 0.3s ease;
+            height: 100%;
         }
+        
         .category-card:hover {
-            transform: scale(1.02);
+            transform: translateY(-5px);
+            box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.15);
         }
-        .category-image {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 5px;
+        
+        .category-img {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
         }
+        
         .action-buttons {
+            position: absolute;
+            top: 10px;
+            right: 10px;
             display: flex;
-            justify-content: space-between;
+            gap: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
-        .filter-sidebar {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 5px;
+        
+        .category-card:hover .action-buttons {
+            opacity: 1;
+        }
+        
+        .action-btn {
+            width: 38px;
+            height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: white;
+            color: var(--text-primary);
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .action-btn.edit-btn:hover {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .action-btn.delete-btn:hover {
+            background-color: #e74a3b;
+            color: white;
+        }
+        
+        .category-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .category-content {
+            padding: 1.25rem;
+        }
+        
+        .category-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        .category-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .search-bar {
+            position: relative;
+        }
+        
+        .search-bar .form-control {
+            padding-left: 2.5rem;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+        
+        .filter-toggle {
+            cursor: pointer;
+        }
+        
+        .filter-section {
+            transition: all 0.3s ease;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+        }
+        
+        .filter-section.show {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        #categoryPreview {
+            width: 100%;
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border: 2px dashed #d1d3e2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+        
+        .scroll-to-top {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .scroll-to-top.show {
+            opacity: 1;
+        }
+        
+        @media (max-width: 767.98px) {
+            .category-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
         }
     </style>
 </head>
+
 <body>
-    <div class="container mt-5">
-        <h2 class="text-center">Categories</h2>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-admin sticky-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand fw-bold text-primary" href="/">
+                <i class="bi bi-music-note-beamed me-2"></i>Music Instruments Admin
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAdmin">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarAdmin">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/products">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/categories">Categories</a>
+                    </li>
+                    <% if (global.currentUser) { %>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle me-1"></i><%= global.currentUser.firstName %>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="/logout"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                            </ul>
+                        </li>
+                    <% } else { %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/login">Login</a>
+                        </li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container py-4">
+        <!-- Page Header -->
+        <div class="page-header d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="fw-bold mb-0">Categories</h1>
+                <p class="mb-0">Manage instrument categories in your inventory</p>
+            </div>
+            <button class="btn btn-light" type="button" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                <i class="bi bi-plus-circle me-1"></i> Add Category
+            </button>
+        </div>
 
         <!-- Success and Error Messages -->
-        <% if (typeof error !== "undefined" && error) { %>
-            <div class="alert alert-danger mb-4"><%= error %></div>
+        <% if (error) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         <% } %>
         
-        <% if (typeof success !== "undefined" && success) { %>
-            <div class="alert alert-success mb-4"><%= success %></div>
+        <% if (success) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <%= success %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         <% } %>
 
-        <div class="row">
-            <!-- Sidebar for Filtering -->
-            <aside class="col-md-3">
-                <div class="filter-sidebar">
-                    <h5>Filter Categories</h5>
-                    <hr>
-                    <label class="form-label">Sort By:</label>
-                    <select class="form-select">
-                        <option>Name (A-Z)</option>
-                        <option>Name (Z-A)</option>
-                    </select>
-                    <hr>
-                    <label class="form-label">Category Type</label>
-                    <div>
-                        <input type="checkbox" id="type1"> <label for="type1">Electronics</label><br>
-                        <input type="checkbox" id="type2"> <label for="type2">Music</label><br>
-                        <input type="checkbox" id="type3"> <label for="type3">Accessories</label>
-                    </div>
-                </div>
-            </aside>
-
-            <!-- Main Content Area -->
-            <div class="col-md-9">
-                <!-- Add Category Form -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-body">
-                        <h4 class="text-center mb-3">Add New Category</h4>
-                        <form action="/categories/add" method="POST">
-                            <div class="mb-3">
-                                <label for="name" class="form-label">Category Name</label>
-                                <input type="text" name="name" class="form-control" id="name" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="image" class="form-label">Image URL</label>
-                                <input type="text" name="image" class="form-control" id="image" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="description" class="form-label">Description</label>
-                                <textarea name="description" class="form-control" id="description" rows="3"></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">Add Category</button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Categories Grid View -->
-                <div class="row">
-                    <% categories.forEach(category => { %>
-                        <div class="col-md-4 mb-4">
-                            <div class="category-card">
-                                <img src="<%= category.image %>" alt="<%= category.name %>" class="category-image">
-                                <h5 class="mt-3"><%= category.name %></h5>
-                                <p class="text-muted"><%= category.description %></p>
-                                <div class="action-buttons">
-                                    <a href="/categories/edit/<%= category._id %>" class="btn btn-warning btn-sm">Edit</a>
-                                    <a href="/categories/delete/<%= category._id %>" class="btn btn-danger btn-sm">Delete</a>
-                                </div>
-                            </div>
+        <!-- Search and Filter Section -->
+        <div class="card">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <div class="search-bar">
+                            <i class="bi bi-search search-icon"></i>
+                            <input type="text" class="form-control" id="searchCategories" placeholder="Search categories...">
                         </div>
-                    <% }) %>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-center">
+                        <div class="filter-toggle d-flex align-items-center ms-auto" id="filterToggle">
+                            <i class="bi bi-funnel me-2"></i> Filters
+                            <i class="bi bi-chevron-down ms-2"></i>
+                        </div>
+                    </div>
                 </div>
+                
+                <div class="filter-section" id="filterSection">
+                    <hr>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Sort By</label>
+                            <select class="form-select" id="sortCategories">
+                                <option value="nameAsc">Name (A-Z)</option>
+                                <option value="nameDesc">Name (Z-A)</option>
+                                <option value="newest">Newest First</option>
+                                <option value="oldest">Oldest First</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories Grid -->
+        <div class="category-grid" id="categoriesContainer">
+            <% categories.forEach(category => { %>
+                <div class="category-card" data-category-name="<%= category.name.toLowerCase() %>">
+                    <div class="category-img" style="background-image: url('<%= category.image %>');"></div>
+                    <div class="category-badge"><%= category.name.charAt(0) %></div>
+                    <div class="action-buttons">
+                        <a href="/categories/edit/<%= category._id %>" class="action-btn edit-btn text-decoration-none">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="/categories/delete/<%= category._id %>" class="action-btn delete-btn text-decoration-none" onclick="return confirm('Are you sure you want to delete this category? This action cannot be undone.')">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </div>
+                    <div class="category-content">
+                        <h5 class="category-title"><%= category.name %></h5>
+                        <p class="category-desc"><%= category.description || 'No description available.' %></p>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+
+        <!-- Empty State -->
+        <% if (categories.length === 0) { %>
+            <div class="text-center py-5">
+                <div class="mb-3">
+                    <i class="bi bi-folder-x" style="font-size: 4rem; opacity: 0.3;"></i>
+                </div>
+                <h4>No Categories Found</h4>
+                <p class="text-muted">Get started by adding your first category.</p>
+                <button class="btn btn-success" type="button" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                    <i class="bi bi-plus-circle me-1"></i> Add Category
+                </button>
+            </div>
+        <% } %>
+    </div>
+
+    <!-- Add Category Modal -->
+    <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="/categories/add" method="POST">
+                    <div class="modal-body">
+                        <div id="categoryPreview">
+                            <span>Image Preview</span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Category Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Image URL</label>
+                            <input type="text" class="form-control" id="image" name="image" required onchange="updatePreview(this.value)">
+                            <div class="form-text">Enter a valid image URL</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">Add Category</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
+    <!-- Footer -->
+    <footer class="bg-white py-4 mt-auto">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between small">
+                <div class="text-muted">Copyright &copy; Music Instruments Admin 2025</div>
+                <div>
+                    <a href="#" class="text-decoration-none text-muted">Privacy Policy</a>
+                    &middot;
+                    <a href="#" class="text-decoration-none text-muted">Terms &amp; Conditions</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll to top button -->
+    <a class="scroll-to-top" href="#" id="scrollToTop">
+        <i class="bi bi-arrow-up"></i>
+    </a>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Filter toggle functionality
+        const filterToggle = document.getElementById('filterToggle');
+        const filterSection = document.getElementById('filterSection');
+        
+        filterToggle.addEventListener('click', function() {
+            filterSection.classList.toggle('show');
+            this.querySelector('.bi-chevron-down').classList.toggle('bi-chevron-up');
+        });
+        
+        // Image preview functionality
+        function updatePreview(url) {
+            const preview = document.getElementById('categoryPreview');
+            if (url) {
+                preview.style.backgroundImage = `url(${url})`;
+                preview.innerHTML = '';
+            } else {
+                preview.style.backgroundImage = 'none';
+                preview.innerHTML = '<span>Image Preview</span>';
+            }
+        }
+        
+        // Search functionality
+        const searchInput = document.getElementById('searchCategories');
+        const categoriesContainer = document.getElementById('categoriesContainer');
+        const categoryCards = document.querySelectorAll('.category-card');
+        
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            
+            categoryCards.forEach(card => {
+                const categoryName = card.getAttribute('data-category-name');
+                if (categoryName.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+        
+        // Sort functionality
+        const sortSelect = document.getElementById('sortCategories');
+        
+        sortSelect.addEventListener('change', function() {
+            const sortValue = this.value;
+            const categoriesArray = Array.from(categoryCards);
+            
+            categoriesArray.sort((a, b) => {
+                const nameA = a.getAttribute('data-category-name');
+                const nameB = b.getAttribute('data-category-name');
+                
+                if (sortValue === 'nameAsc') {
+                    return nameA.localeCompare(nameB);
+                } else if (sortValue === 'nameDesc') {
+                    return nameB.localeCompare(nameA);
+                }
+                // Add more sorting options as needed
+            });
+            
+            categoriesArray.forEach(card => {
+                categoriesContainer.appendChild(card);
+            });
+        });
+        
+        // Scroll to top functionality
+        const scrollToTopBtn = document.getElementById('scrollToTop');
+        
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 100) {
+                scrollToTopBtn.classList.add('show');
+            } else {
+                scrollToTopBtn.classList.remove('show');
+            }
+        });
+        
+        scrollToTopBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    </script>
 </body>
 </html>
