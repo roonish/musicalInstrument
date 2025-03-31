@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Music Instruments Admin</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #a5b4fc;
+            --secondary-color: #10b981;
+            --secondary-dark: #059669;
+            --secondary-light: #6ee7b7;
+            --tertiary-color: #f59e0b;
+            --tertiary-dark: #d97706;
+            --info-color: #3b82f6;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --background-color: #f9fafb;
+            --card-bg: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+        }
+        
+        body {
+            background-color: var(--background-color);
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100vh;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+            color: white;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 3px 0 10px rgba(0, 0, 0, 0.1);
+            padding-top: 1rem;
+            overflow-y: auto;
+        }
+        
+        .sidebar-collapsed {
+            width: 70px;
+        }
+        
+        .sidebar-brand {
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .sidebar-brand-text {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-left: 0.75rem;
+            white-space: nowrap;
+            transition: opacity 0.3s;
+            opacity: 1;
+        }
+        
+        .sidebar-collapsed .sidebar-brand-text {
+            opacity: 0;
+            display: none;
+        }
+        
+        .sidebar-divider {
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            margin: 0.5rem 1rem 1rem;
+        }
+        
+        .nav-item {
+            position: relative;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+            border-radius: 0.5rem;
+            margin: 0.25rem 0.7rem;
+        }
+        
+        .nav-link:hover {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-link.active {
+            background-color: white;
+            color: var(--primary-dark);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-icon {
+            font-size: 1.25rem;
+            min-width: 2rem;
+            text-align: center;
+        }
+        
+        .nav-text {
+            white-space: nowrap;
+            transition: opacity 0.3s;
+            opacity: 1;
+        }
+        
+        .sidebar-collapsed .nav-text {
+            opacity: 0;
+            display: none;
+        }
+        
+        .sidebar-toggle {
+            position: absolute;
+            right: -10px;
+            top: 20px;
+            background-color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            z-index: 100;
+        }
+        
+        .sidebar-toggle i {
+            color: var(--primary-color);
+            font-size: 0.8rem;
+            transition: transform 0.3s;
+        }
+        
+        .sidebar-collapsed .sidebar-toggle i {
+            transform: rotate(180deg);
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            margin-left: 250px;
+            transition: margin-left 0.3s ease;
+            width: calc(100% - 250px);
+        }
+        
+        .main-content-expanded {
+            margin-left: 70px;
+            width: calc(100% - 70px);
+        }
+        
+        .top-navbar {
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            height: 70px;
+            display: flex;
+            align-items: center;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 990;
+        }
+        
+        .navbar-search {
+            position: relative;
+            margin-right: 2rem;
+        }
+        
+        .navbar-search input {
+            border-radius: 9999px;
+            padding-left: 2.5rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            width: 300px;
+        }
+        
+        .navbar-search i {
+            position: absolute;
+            left: 0.9rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+        
+        .navbar-search input:focus {
+            box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25);
+            border-color: var(--primary-light);
+        }
+        
+        .user-dropdown {
+            margin-left: auto;
+        }
+        
+        .user-dropdown .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-dark);
+            font-weight: 600;
+            margin-right: 0.75rem;
+        }
+        
+        .user-info {
+            text-align: left;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+        
+        .user-role {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0;
+        }
+        
+        .dropdown-menu {
+            border-radius: 0.5rem;
+            border: none;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.25rem;
+        }
+        
+        .dropdown-item i {
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+        }
+        
+        .dropdown-item:hover {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+        }
+        
+        .dropdown-divider {
+            border-top-color: var(--border-color);
+        }
+        
+        /* Dashboard Content Styles */
+        .dashboard-content {
+            padding: 2rem;
+        }
+        
+        .page-header {
+            margin-bottom: 1.5rem;
+        }
+        
+        .page-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 0;
+        }
+        
+        .stats-card {
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+            height: 100%;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stats-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stats-primary {
+            background-color: rgba(99, 102, 241, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .stats-success {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--secondary-color);
+        }
+        
+        .stats-warning {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--tertiary-color);
+        }
+        
+        .stats-info {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--info-color);
+        }
+        
+        .stats-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stats-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stats-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .chart-card {
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .chart-title {
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+        
+        .chart-container {
+            height: 300px;
+        }
+        
+        .recent-table {
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .table-title {
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+        
+        .table {
+            color: var(--text-primary);
+        }
+        
+        .table td, .table th {
+            padding: 1rem;
+            vertical-align: middle;
+        }
+        
+        .table th {
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom-width: 1px;
+        }
+        
+        .table-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        
+        .status-badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-in-stock {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--secondary-dark);
+        }
+        
+        .status-low-stock {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--tertiary-dark);
+        }
+        
+        .status-out-of-stock {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+        }
+        
+        .category-badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            background-color: rgba(99, 102, 241, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .progress {
+            height: 8px;
+            border-radius: 9999px;
+            background-color: var(--border-color);
+        }
+        
+        .progress-primary {
+            background-color: var(--primary-color);
+        }
+        
+        .progress-success {
+            background-color: var(--secondary-color);
+        }
+        
+        .progress-warning {
+            background-color: var(--tertiary-color);
+        }
+        
+        .todo-list {
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .todo-item:last-child {
+            border-bottom: none;
+        }
+        
+        .todo-checkbox {
+            margin-right: 1rem;
+        }
+        
+        .todo-checkbox input {
+            width: 1.25rem;
+            height: 1.25rem;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+        }
+        
+        .todo-content {
+            flex: 1;
+        }
+        
+        .todo-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+        
+        .todo-due {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        .todo-priority {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        
+        .priority-high {
+            background-color: var(--danger-color);
+        }
+        
+        .priority-medium {
+            background-color: var(--tertiary-color);
+        }
+        
+        .priority-low {
+            background-color: var(--info-color);
+        }
+        
+        .stock-card {
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .stock-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .stock-item:last-child {
+            border-bottom: none;
+        }
+        
+        .stock-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 1rem;
+        }
+        
+        .stock-content {
+            flex: 1;
+        }
+        
+        .stock-name {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stock-category {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        .stock-quantity {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .btn-action {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            color: var(--text-secondary);
+            background-color: transparent;
+            border: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .btn-action:hover {
+            background-color: var(--background-color);
+            color: var(--text-primary);
+        }
+        
+        .footer {
+            background-color: white;
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        /* Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 70px;
+            }
+            
+            .sidebar-brand-text, .nav-text {
+                opacity: 0;
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+                width: calc(100% - 70px);
+            }
+            
+            .sidebar-toggle {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .navbar-search {
+                display: none;
+            }
+            
+            .stats-value {
+                font-size: 1.5rem;
+            }
+            
+            .chart-container {
+                height: 250px;
+            }
+            
+            .user-info {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .sidebar {
+                width: 0;
+                opacity: 0;
+                pointer-events: none;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .dashboard-content {
+                padding: 1rem;
+            }
+            
+            .top-navbar {
+                padding: 0 1rem;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-toggle" id="sidebarToggle">
+            <i class="bi bi-chevron-left"></i>
+        </div>
+        
+        <div class="sidebar-brand">
+            <i class="bi bi-music-note-beamed fs-4"></i>
+            <span class="sidebar-brand-text">Music Admin</span>
+        </div>
+        
+        <hr class="sidebar-divider">
+        
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" href="/dashboard">
+                    <i class="bi bi-speedometer2 nav-icon"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link" href="/">
+                    <i class="bi bi-house nav-icon"></i>
+                    <span class="nav-text">Home</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link" href="/products">
+                    <i class="bi bi-music-note-list nav-icon"></i>
+                    <span class="nav-text">Products</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link" href="/categories">
+                    <i class="bi bi-folder nav-icon"></i>
+                    <span class="nav-text">Categories</span>
+                </a>
+            </li>
+            
+            <hr class="sidebar-divider">
+            
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="bi bi-people nav-icon"></i>
+                    <span class="nav-text">Customers</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="bi bi-cart nav-icon"></i>
+                    <span class="nav-text">Orders</span>
+                </a>
+            </li>
+            
+            <hr class="sidebar-divider">
+            
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="bi bi-gear nav-icon"></i>
+                    <span class="nav-text">Settings</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">
+                    <i class="bi bi-box-arrow-right nav-icon"></i>
+                    <span class="nav-text">Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Navbar -->
+        <nav class="top-navbar">
+            <div class="navbar-search">
+                <i class="bi bi-search"></i>
+                <input type="text" class="form-control" placeholder="Search...">
+            </div>
+            
+            <div class="user-dropdown dropdown">
+                <button class="dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="user-avatar">
+                        <%= user.firstName.charAt(0) %><%= user.lastName.charAt(0) %>
+                    </div>
+                    <div class="user-info">
+                        <p class="user-name"><%= user.firstName %> <%= user.lastName %></p>
+                        <p class="user-role">Administrator</p>
+                    </div>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> Profile</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> Settings</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                </ul>
+            </div>
+        </nav>
+        
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <div class="page-header fade-in">
+                <h1 class="page-title">Dashboard</h1>
+                <p class="page-subtitle">Welcome back, <%= user.firstName %>! Here's what's happening with your inventory today.</p>
+            </div>
+            
+            <!-- Stats Cards -->
+            <div class="row fade-in" style="animation-delay: 0.1s;">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="stats-card">
+                        <div class="stats-icon stats-primary">
+                            <i class="bi bi-music-note-list"></i>
+                        </div>
+                        <h3 class="stats-title">Total Products</h3>
+                        <h2 class="stats-value">125</h2>
+                        <p class="stats-desc"><i class="bi bi-arrow-up-short text-success"></i> 5% increase from last month</p>
+                    </div>
+                </div>
+                
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="stats-card">
+                        <div class="stats-icon stats-success">
+                            <i class="bi bi-folder"></i>
+                        </div>
+                        <h3 class="stats-title">Categories</h3>
+                        <h2 class="stats-value">16</h2>
+                        <p class="stats-desc"><i class="bi bi-arrow-up-short text-success"></i> 2 new categories added</p>
+                    </div>
+                </div>
+                
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="stats-card">
+                        <div class="stats-icon stats-warning">
+                            <i class="bi bi-exclamation-triangle"></i>
+                        </div>
+                        <h3 class="stats-title">Low Stock</h3>
+                        <h2 class="stats-value">8</h2>
+                        <p class="stats-desc"><i class="bi bi-arrow-down-short text-danger"></i> 3 items need restock</p>
+                    </div>
+                </div>
+                
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="stats-card">
+                        <div class="stats-icon stats-info">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <h3 class="stats-title">Users</h3>
+                        <h2 class="stats-value">3</h2>
+                        <p class="stats-desc"><i class="bi bi-arrow-up-short text-success"></i> 1 new user this month</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Charts Row -->
+            <div class="row fade-in" style="animation-delay: 0.2s;">
+                <div class="col-xl-8 mb-4">
+                    <div class="chart-card">
+                        <h3 class="chart-title">Sales Overview</h3>
+                        <div class="chart-container">
+                            <canvas id="salesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-4 mb-4">
+                    <div class="chart-card">
+                        <h3 class="chart-title">Products by Category</h3>
+                        <div class="chart-container">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Products Table -->
+            <div class="row fade-in" style="animation-delay: 0.3s;">
+                <div class="col-12 mb-4">
+                    <div class="recent-table">
+                        <h3 class="table-title">Recent Products</h3>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Category</th>
+                                        <th>Price</th>
+                                        <th>Stock</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://images.unsplash.com/photo-1564186763535-ebb21ef5277f" alt="Product" class="table-image me-3">
+                                                <span>Acoustic Guitar</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="category-badge">String Instruments</span></td>
+                                        <td>$499.99</td>
+                                        <td>24</td>
+                                        <td><span class="status-badge status-in-stock">In Stock</span></td>
+                                        <td>
+                                            <button class="btn-action"><i class="bi bi-pencil"></i></button>
+                                            <button class="btn-action"><i class="bi bi-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://images.unsplash.com/photo-1447160430190-9d1cae0b73db" alt="Product" class="table-image me-3">
+                                                <span>Electric Keyboard</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="category-badge">Keyboards</span></td>
+                                        <td>$649.99</td>
+                                        <td>8</td>
+                                        <td><span class="status-badge status-low-stock">Low Stock</span></td>
+                                        <td>
+                                            <button class="btn-action"><i class="bi bi-pencil"></i></button>
+                                            <button class="btn-action"><i class="bi bi-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://images.unsplash.com/photo-1519892300165-cb5542fb47c7" alt="Product" class="table-image me-3">
+                                                <span>Drum Set</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="category-badge">Percussion</span></td>
+                                        <td>$899.99</td>
+                                        <td>0</td>
+                                        <td><span class="status-badge status-out-of-stock">Out of Stock</span></td>
+                                        <td>
+                                            <button class="btn-action"><i class="bi bi-pencil"></i></button>
+                                            <button class="btn-action"><i class="bi bi-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://images.unsplash.com/photo-1558098329-44e8652b5472" alt="Product" class="table-image me-3">
+                                                <span>Electric Guitar</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="category-badge">String Instruments</span></td>
+                                        <td>$799.99</td>
+                                        <td>15</td>
+                                        <td><span class="status-badge status-in-stock">In Stock</span></td>
+                                        <td>
+                                            <button class="btn-action"><i class="bi bi-pencil"></i></button>
+                                            <button class="btn-action"><i class="bi bi-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://images.unsplash.com/photo-1573871669414-010dbf73ca84" alt="Product" class="table-image me-3">
+                                                <span>Violin</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="category-badge">String Instruments</span></td>
+                                        <td>$349.99</td>
+                                        <td>7</td>
+                                        <td><span class="status-badge status-low-stock">Low Stock</span></td>
+                                        <td>
+                                            <button class="btn-action"><i class="bi bi-pencil"></i></button>
+                                            <button class="btn-action"><i class="bi bi-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- To-Do List and Low Stock -->
+            <div class="row fade-in" style="animation-delay: 0.4s;">
+                <div class="col-lg-6 mb-4">
+                    <div class="todo-list">
+                        <h3 class="table-title">To-Do List</h3>
+                        
+                        <div class="todo-item">
+                            <div class="todo-checkbox">
+                                <input type="checkbox" id="todo1">
+                            </div>
+                            <div class="todo-content">
+                                <h5 class="todo-title"><span class="todo-priority priority-high"></span> Restock Electric Keyboards</h5>
+                                <p class="todo-due">Due: Today</p>
+                            </div>
+                            <button class="btn-action"><i class="bi bi-three-dots-vertical"></i></button>
+                        </div>
+                        
+                        <div class="todo-item">
+                            <div class="todo-checkbox">
+                                <input type="checkbox" id="todo2">
+                            </div>
+                            <div class="todo-content">
+                                <h5 class="todo-title"><span class="todo-priority priority-medium"></span> Update product descriptions</h5>
+                                <p class="todo-due">Due: Tomorrow</p>
+                            </div>
+                            <button class="btn-action"><i class="bi bi-three-dots-vertical"></i></button>
+                        </div>
+                        
+                        <div class="todo-item">
+                            <div class="todo-checkbox">
+                                <input type="checkbox" id="todo3">
+                            </div>
+                            <div class="todo-content">
+                                <h5 class="todo-title"><span class="todo-priority priority-low"></span> Add new product images</h5>
+                                <p class="todo-due">Due: In 3 days</p>
+                            </div>
+                            <button class="btn-action"><i class="bi bi-three-dots-vertical"></i></button>
+                        </div>
+                        
+                        <div class="todo-item">
+                            <div class="todo-checkbox">
+                                <input type="checkbox" id="todo4">
+                            </div>
+                            <div class="todo-content">
+                                <h5 class="todo-title"><span class="todo-priority priority-medium"></span> Review new supplier quotes</h5>
+                                <p class="todo-due">Due: In 5 days</p>
+                            </div>
+                            <button class="btn-action"><i class="bi bi-three-dots-vertical"></i></button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 mb-4">
+                    <div class="stock-card">
+                        <h3 class="table-title">Low Stock Alert</h3>
+                        
+                        <div class="stock-item">
+                            <img src="https://images.unsplash.com/photo-1447160430190-9d1cae0b73db" alt="Product" class="stock-image">
+                            <div class="stock-content">
+                                <h5 class="stock-name">Electric Keyboard</h5>
+                                <p class="stock-category">Keyboards</p>
+                            </div>
+                            <div class="stock-quantity">8 left</div>
+                        </div>
+                        
+                        <div class="stock-item">
+                            <img src="https://images.unsplash.com/photo-1573871669414-010dbf73ca84" alt="Product" class="stock-image">
+                            <div class="stock-content">
+                                <h5 class="stock-name">Violin</h5>
+                                <p class="stock-category">String Instruments</p>
+                            </div>
+                            <div class="stock-quantity">7 left</div>
+                        </div>
+                        
+                        <div class="stock-item">
+                            <img src="https://images.unsplash.com/photo-1544098675-788a92e4cd1d" alt="Product" class="stock-image">
+                            <div class="stock-content">
+                                <h5 class="stock-name">Saxophone</h5>
+                                <p class="stock-category">Wind Instruments</p>
+                            </div>
+                            <div class="stock-quantity">5 left</div>
+                        </div>
+                        
+                        <div class="stock-item">
+                            <img src="https://images.unsplash.com/photo-1545167496-c1e092d383a2" alt="Product" class="stock-image">
+                            <div class="stock-content">
+                                <h5 class="stock-name">Harmonica</h5>
+                                <p class="stock-category">Wind Instruments</p>
+                            </div>
+                            <div class="stock-quantity">3 left</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="footer">
+            <p>© 2025 Music Instruments Admin. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar Toggle
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('sidebar-collapsed');
+                mainContent.classList.toggle('main-content-expanded');
+            });
+            
+            // Sales Chart
+            const salesCtx = document.getElementById('salesChart').getContext('2d');
+            const salesChart = new Chart(salesCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'Sales ($)',
+                        data: [5000, 6200, 7500, 8000, 7800, 9500, 10000, 11200, 10500, 12000, 13500, 15000],
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                borderDash: [5, 5]
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Category Chart
+            const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+            const categoryChart = new Chart(categoryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['String Instruments', 'Percussion', 'Wind Instruments', 'Keyboards', 'Accessories'],
+                    datasets: [{
+                        data: [40, 20, 15, 15, 10],
+                        backgroundColor: [
+                            '#6366f1',
+                            '#10b981',
+                            '#f59e0b',
+                            '#3b82f6',
+                            '#ef4444'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

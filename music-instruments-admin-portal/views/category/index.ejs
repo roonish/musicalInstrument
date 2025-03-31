@@ -6,84 +6,222 @@
     <title>Categories | Music Instruments Admin</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
     <style>
         :root {
-            --primary-color: #4e73df;
-            --secondary-color: #1cc88a;
-            --background-color: #f8f9fc;
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #a5b4fc;
+            --secondary-color: #10b981;
+            --secondary-dark: #059669;
+            --secondary-light: #6ee7b7;
+            --tertiary-color: #f59e0b;
+            --tertiary-dark: #d97706;
+            --danger-color: #ef4444;
+            --background-color: #f9fafb;
             --card-bg: #ffffff;
-            --text-primary: #5a5c69;
-            --text-secondary: #858796;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
         }
         
         body {
             background-color: var(--background-color);
-            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
         
         .navbar-admin {
             background-color: white;
-            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            padding: 12px 0;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: linear-gradient(to right, var(--primary-color), var(--tertiary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-brand:hover {
+            transform: scale(1.05);
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            color: var(--text-primary);
+            position: relative;
+            padding: 0.5rem 1rem;
+            margin: 0 0.25rem;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
+        }
+        
+        .nav-link.active {
+            color: var(--primary-color);
+            font-weight: 600;
         }
         
         .page-header {
-            background: linear-gradient(135deg, var(--secondary-color) 0%, #159a6a 100%);
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--secondary-dark) 100%);
             color: white;
-            border-radius: 10px;
-            padding: 1.5rem 2rem;
+            border-radius: 16px;
+            padding: 2rem 2.5rem;
             margin-bottom: 1.5rem;
-            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(30deg);
+            pointer-events: none;
+        }
+        
+        .page-title {
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            position: relative;
         }
         
         .card {
-            border-radius: 10px;
-            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
-            margin-bottom: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
         }
         
         .form-control, .form-select {
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 0.75rem 1rem;
-            border: 1px solid #d1d3e2;
+            border: 1px solid var(--border-color);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
         }
         
         .form-control:focus, .form-select:focus {
             border-color: var(--secondary-color);
-            box-shadow: 0 0 0 0.25rem rgba(28, 200, 138, 0.25);
+            box-shadow: 0 0 0 0.25rem rgba(16, 185, 129, 0.25);
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
         }
         
         .btn-success {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
+            background: linear-gradient(to right, var(--secondary-color), var(--secondary-dark));
+            border: none;
+            border-radius: 9999px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.5);
+        }
+        
+        .btn-light {
+            background-color: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 9999px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-light:hover {
+            background-color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
         
         .category-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 1.5rem;
         }
         
         .category-card {
             position: relative;
+            border-radius: 16px;
             overflow: hidden;
-            border-radius: 10px;
-            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
             height: 100%;
+            background-color: var(--card-bg);
+            transform-origin: center bottom;
         }
         
         .category-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.15);
+            transform: translateY(-12px) scale(1.01);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: var(--secondary-light);
         }
         
         .category-img {
-            height: 180px;
+            height: 200px;
             background-size: cover;
             background-position: center;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.75s ease;
+        }
+        
+        .category-card:hover .category-img {
+            transform: scale(1.05);
+        }
+        
+        .category-badge {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--secondary-color), var(--secondary-dark));
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
+            border-radius: 50%;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 2;
         }
         
         .action-buttons {
@@ -92,25 +230,28 @@
             right: 10px;
             display: flex;
             gap: 0.5rem;
+            z-index: 2;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
         }
         
         .category-card:hover .action-buttons {
             opacity: 1;
+            transform: translateY(0);
         }
         
         .action-btn {
-            width: 38px;
-            height: 38px;
+            width: 40px;
+            height: 40px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             border-radius: 50%;
             background-color: white;
             color: var(--text-primary);
-            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
-            transition: all 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
         }
         
         .action-btn:hover {
@@ -123,36 +264,25 @@
         }
         
         .action-btn.delete-btn:hover {
-            background-color: #e74a3b;
+            background-color: var(--danger-color);
             color: white;
-        }
-        
-        .category-badge {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background-color: var(--secondary-color);
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
         }
         
         .category-content {
-            padding: 1.25rem;
+            padding: 1.5rem;
         }
         
         .category-title {
             font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
             color: var(--text-primary);
         }
         
         .category-desc {
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
             margin-bottom: 0;
             display: -webkit-box;
             -webkit-line-clamp: 3;
@@ -165,73 +295,208 @@
         }
         
         .search-bar .form-control {
-            padding-left: 2.5rem;
+            padding-left: 3rem;
+            height: 50px;
+            border-radius: 9999px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
         
         .search-icon {
             position: absolute;
-            left: 1rem;
+            left: 1.25rem;
             top: 50%;
             transform: translateY(-50%);
             color: var(--text-secondary);
+            font-size: 1.1rem;
         }
         
         .filter-toggle {
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            background-color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .filter-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
         
         .filter-section {
-            transition: all 0.3s ease;
             max-height: 0;
             overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             opacity: 0;
         }
         
         .filter-section.show {
             max-height: 500px;
             opacity: 1;
-            margin-top: 1rem;
-            margin-bottom: 1rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
         }
         
         #categoryPreview {
             width: 100%;
-            height: 200px;
+            height: 220px;
             background-size: cover;
             background-position: center;
-            border-radius: 10px;
-            margin-bottom: 1rem;
-            border: 2px dashed #d1d3e2;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border: 2px dashed var(--border-color);
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--text-secondary);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        #categoryPreview.has-image {
+            border-color: var(--secondary-color);
+        }
+        
+        .modal-content {
+            border-radius: 16px;
+            border: none;
+            overflow: hidden;
+        }
+        
+        .modal-header {
+            background-color: var(--secondary-color);
+            color: white;
+            border-bottom: none;
+            padding: 1.5rem;
+        }
+        
+        .modal-title {
+            font-weight: 600;
+        }
+        
+        .modal-body {
+            padding: 1.75rem;
+        }
+        
+        .modal-footer {
+            border-top: none;
+            padding: 1rem 1.75rem 1.75rem;
+        }
+        
+        .btn-close {
+            color: white;
+            background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
+            opacity: 0.75;
+        }
+        
+        .btn-close:hover, .btn-close:focus {
+            opacity: 1;
+        }
+        
+        .footer {
+            background-color: white;
+            border-top: 1px solid var(--border-color);
+            padding: 1.5rem 0;
+            margin-top: auto;
+        }
+        
+        .footer a {
+            color: var(--text-secondary);
+            transition: color 0.3s ease;
+        }
+        
+        .footer a:hover {
+            color: var(--secondary-color);
         }
         
         .scroll-to-top {
             position: fixed;
-            right: 1rem;
-            bottom: 1rem;
-            width: 2.75rem;
-            height: 2.75rem;
+            right: 1.5rem;
+            bottom: 1.5rem;
+            width: 3rem;
+            height: 3rem;
             border-radius: 50%;
-            background-color: var(--secondary-color);
+            background: linear-gradient(to right, var(--secondary-color), var(--secondary-dark));
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
-            transition: all 0.3s;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1000;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
         }
         
         .scroll-to-top.show {
             opacity: 1;
+            transform: translateY(-10px);
+        }
+        
+        .scroll-to-top:hover {
+            transform: translateY(-15px) scale(1.1);
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fadeIn {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        .alert {
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        
+        .empty-state {
+            padding: 4rem 2rem;
+            text-align: center;
+            border-radius: 16px;
+            background-color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        
+        .empty-state-icon {
+            font-size: 4rem;
+            color: var(--text-secondary);
+            opacity: 0.3;
+            margin-bottom: 1.5rem;
+        }
+        
+        .empty-state-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        .empty-state-text {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
         }
         
         @media (max-width: 767.98px) {
+            .page-header {
+                padding: 1.5rem;
+            }
+            
             .category-grid {
                 grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .category-img {
+                height: 160px;
             }
         }
     </style>
@@ -241,7 +506,7 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-admin sticky-top">
         <div class="container-fluid px-4">
-            <a class="navbar-brand fw-bold text-primary" href="/">
+            <a class="navbar-brand" href="/">
                 <i class="bi bi-music-note-beamed me-2"></i>Music Instruments Admin
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAdmin">
@@ -263,7 +528,11 @@
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-person-circle me-1"></i><%= global.currentUser.firstName %>
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
+                            <ul class="dropdown-menu dropdown-menu-end rounded-3 border-0 shadow-sm">
+                                <li><h6 class="dropdown-header">User Options</h6></li>
+                                <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Profile</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Settings</a></li>
+                                <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="/logout"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
                             </ul>
                         </li>
@@ -280,45 +549,53 @@
     <!-- Main Content -->
     <div class="container py-4">
         <!-- Page Header -->
-        <div class="page-header d-flex justify-content-between align-items-center">
-            <div>
-                <h1 class="fw-bold mb-0">Categories</h1>
-                <p class="mb-0">Manage instrument categories in your inventory</p>
+        <div class="page-header fadeIn">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="page-title">Categories</h1>
+                    <p class="mb-0">Manage instrument categories in your inventory</p>
+                </div>
+                <button class="btn btn-light" type="button" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                    <i class="bi bi-plus-circle me-2"></i> Add Category
+                </button>
             </div>
-            <button class="btn btn-light" type="button" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-                <i class="bi bi-plus-circle me-1"></i> Add Category
-            </button>
         </div>
 
         <!-- Success and Error Messages -->
         <% if (error) { %>
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <%= error %>
+            <div class="alert alert-danger alert-dismissible fade show fadeIn" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <strong><%= error %></strong>
+                </div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         <% } %>
         
         <% if (success) { %>
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <%= success %>
+            <div class="alert alert-success alert-dismissible fade show fadeIn" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <strong><%= success %></strong>
+                </div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         <% } %>
 
         <!-- Search and Filter Section -->
-        <div class="card">
-            <div class="card-body">
-                <div class="row g-3">
+        <div class="card mb-4 fadeIn" style="animation-delay: 0.1s;">
+            <div class="card-body p-4">
+                <div class="row g-3 align-items-center">
                     <div class="col-md-8">
                         <div class="search-bar">
                             <i class="bi bi-search search-icon"></i>
                             <input type="text" class="form-control" id="searchCategories" placeholder="Search categories...">
                         </div>
                     </div>
-                    <div class="col-md-4 d-flex align-items-center">
-                        <div class="filter-toggle d-flex align-items-center ms-auto" id="filterToggle">
+                    <div class="col-md-4 d-flex justify-content-md-end">
+                        <div class="filter-toggle" id="filterToggle">
                             <i class="bi bi-funnel me-2"></i> Filters
-                            <i class="bi bi-chevron-down ms-2"></i>
+                            <i class="bi bi-chevron-down ms-2" id="filterIcon"></i>
                         </div>
                     </div>
                 </div>
@@ -335,17 +612,22 @@
                                 <option value="oldest">Oldest First</option>
                             </select>
                         </div>
+                        <div class="col-md-6 text-md-end align-self-end">
+                            <button class="btn btn-sm btn-outline-secondary" id="resetFilters">
+                                <i class="bi bi-arrow-clockwise me-1"></i> Reset Filters
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Categories Grid -->
-        <div class="category-grid" id="categoriesContainer">
-            <% categories.forEach(category => { %>
-                <div class="category-card" data-category-name="<%= category.name.toLowerCase() %>">
+        <div class="category-grid mb-4" id="categoriesContainer">
+            <% categories.forEach((category, index) => { %>
+                <div class="category-card fadeIn" style="animation-delay: <%= 0.2 + (index * 0.05) %>s;" data-category-name="<%= category.name.toLowerCase() %>">
                     <div class="category-img" style="background-image: url('<%= category.image %>');"></div>
-                    <div class="category-badge"><%= category.name.charAt(0) %></div>
+                    <div class="category-badge"><%= category.name.charAt(0).toUpperCase() %></div>
                     <div class="action-buttons">
                         <a href="/categories/edit/<%= category._id %>" class="action-btn edit-btn text-decoration-none">
                             <i class="bi bi-pencil"></i>
@@ -364,14 +646,14 @@
 
         <!-- Empty State -->
         <% if (categories.length === 0) { %>
-            <div class="text-center py-5">
-                <div class="mb-3">
-                    <i class="bi bi-folder-x" style="font-size: 4rem; opacity: 0.3;"></i>
+            <div class="empty-state fadeIn">
+                <div class="empty-state-icon">
+                    <i class="bi bi-folder-x"></i>
                 </div>
-                <h4>No Categories Found</h4>
-                <p class="text-muted">Get started by adding your first category.</p>
+                <h4 class="empty-state-title">No Categories Found</h4>
+                <p class="empty-state-text">Get started by adding your first category</p>
                 <button class="btn btn-success" type="button" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-                    <i class="bi bi-plus-circle me-1"></i> Add Category
+                    <i class="bi bi-plus-circle me-2"></i> Add Category
                 </button>
             </div>
         <% } %>
@@ -405,7 +687,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-success">Add Category</button>
                     </div>
                 </form>
@@ -414,14 +696,14 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-white py-4 mt-auto">
+    <footer class="footer">
         <div class="container">
             <div class="d-flex align-items-center justify-content-between small">
                 <div class="text-muted">Copyright &copy; Music Instruments Admin 2025</div>
                 <div>
-                    <a href="#" class="text-decoration-none text-muted">Privacy Policy</a>
-                    &middot;
-                    <a href="#" class="text-decoration-none text-muted">Terms &amp; Conditions</a>
+                    <a href="#" class="text-decoration-none me-3">Privacy Policy</a>
+                    <a href="#" class="text-decoration-none me-3">Terms &amp; Conditions</a>
+                    <a href="#" class="text-decoration-none">Support</a>
                 </div>
             </div>
         </div>
@@ -434,87 +716,160 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Filter toggle functionality
-        const filterToggle = document.getElementById('filterToggle');
-        const filterSection = document.getElementById('filterSection');
-        
-        filterToggle.addEventListener('click', function() {
-            filterSection.classList.toggle('show');
-            this.querySelector('.bi-chevron-down').classList.toggle('bi-chevron-up');
+        document.addEventListener('DOMContentLoaded', function() {
+            // Filter toggle functionality
+            const filterToggle = document.getElementById('filterToggle');
+            const filterSection = document.getElementById('filterSection');
+            const filterIcon = document.getElementById('filterIcon');
+            
+            filterToggle.addEventListener('click', function() {
+                filterSection.classList.toggle('show');
+                filterIcon.classList.toggle('bi-chevron-down');
+                filterIcon.classList.toggle('bi-chevron-up');
+            });
+            
+            // Image preview functionality
+            const imageInput = document.getElementById('image');
+            const preview = document.getElementById('categoryPreview');
+            
+            function updatePreview(url) {
+                if (url) {
+                    preview.style.backgroundImage = `url(${url})`;
+                    preview.innerHTML = '';
+                    preview.classList.add('has-image');
+                } else {
+                    preview.style.backgroundImage = 'none';
+                    preview.innerHTML = '<span>Image Preview</span>';
+                    preview.classList.remove('has-image');
+                }
+            }
+            
+            if (imageInput) {
+                imageInput.addEventListener('input', function() {
+                    updatePreview(this.value);
+                });
+            }
+            
+            // Search functionality
+            const searchInput = document.getElementById('searchCategories');
+            const categoriesContainer = document.getElementById('categoriesContainer');
+            const categoryCards = document.querySelectorAll('.category-card');
+            
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase().trim();
+                
+                categoryCards.forEach(card => {
+                    const categoryName = card.getAttribute('data-category-name');
+                    if (categoryName.includes(searchTerm)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Sort functionality
+            const sortSelect = document.getElementById('sortCategories');
+            
+            sortSelect.addEventListener('change', function() {
+                const sortValue = this.value;
+                const categoriesArray = Array.from(categoryCards);
+                
+                categoriesArray.sort((a, b) => {
+                    const nameA = a.getAttribute('data-category-name');
+                    const nameB = b.getAttribute('data-category-name');
+                    
+                    if (sortValue === 'nameAsc') {
+                        return nameA.localeCompare(nameB);
+                    } else if (sortValue === 'nameDesc') {
+                        return nameB.localeCompare(nameA);
+                    }
+                    // Add more sorting options as needed
+                });
+                
+                categoriesArray.forEach(card => {
+                    categoriesContainer.appendChild(card);
+                });
+            });
+            
+            // Reset filters
+            const resetFiltersBtn = document.getElementById('resetFilters');
+            
+            resetFiltersBtn.addEventListener('click', function() {
+                searchInput.value = '';
+                sortSelect.value = 'nameAsc';
+                
+                // Display all cards
+                categoryCards.forEach(card => {
+                    card.style.display = 'block';
+                });
+                
+                // Sort by name ascending
+                const categoriesArray = Array.from(categoryCards);
+                
+                categoriesArray.sort((a, b) => {
+                    const nameA = a.getAttribute('data-category-name');
+                    const nameB = b.getAttribute('data-category-name');
+                    return nameA.localeCompare(nameB);
+                });
+                
+                categoriesArray.forEach(card => {
+                    categoriesContainer.appendChild(card);
+                });
+            });
+            
+            // Scroll to top functionality
+            const scrollToTopBtn = document.getElementById('scrollToTop');
+            
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 100) {
+                    scrollToTopBtn.classList.add('show');
+                } else {
+                    scrollToTopBtn.classList.remove('show');
+                }
+            });
+            
+            scrollToTopBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+            
+            // Add fadeIn animation to elements when they come into view
+            const animateElements = document.querySelectorAll('.fadeIn');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = 1;
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            animateElements.forEach(element => {
+                element.style.opacity = 0;
+                element.style.transform = 'translateY(20px)';
+                element.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                observer.observe(element);
+            });
         });
         
-        // Image preview functionality
+        // External function for the update preview functionality
         function updatePreview(url) {
             const preview = document.getElementById('categoryPreview');
             if (url) {
                 preview.style.backgroundImage = `url(${url})`;
                 preview.innerHTML = '';
+                preview.classList.add('has-image');
             } else {
                 preview.style.backgroundImage = 'none';
                 preview.innerHTML = '<span>Image Preview</span>';
+                preview.classList.remove('has-image');
             }
         }
-        
-        // Search functionality
-        const searchInput = document.getElementById('searchCategories');
-        const categoriesContainer = document.getElementById('categoriesContainer');
-        const categoryCards = document.querySelectorAll('.category-card');
-        
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase().trim();
-            
-            categoryCards.forEach(card => {
-                const categoryName = card.getAttribute('data-category-name');
-                if (categoryName.includes(searchTerm)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        });
-        
-        // Sort functionality
-        const sortSelect = document.getElementById('sortCategories');
-        
-        sortSelect.addEventListener('change', function() {
-            const sortValue = this.value;
-            const categoriesArray = Array.from(categoryCards);
-            
-            categoriesArray.sort((a, b) => {
-                const nameA = a.getAttribute('data-category-name');
-                const nameB = b.getAttribute('data-category-name');
-                
-                if (sortValue === 'nameAsc') {
-                    return nameA.localeCompare(nameB);
-                } else if (sortValue === 'nameDesc') {
-                    return nameB.localeCompare(nameA);
-                }
-                // Add more sorting options as needed
-            });
-            
-            categoriesArray.forEach(card => {
-                categoriesContainer.appendChild(card);
-            });
-        });
-        
-        // Scroll to top functionality
-        const scrollToTopBtn = document.getElementById('scrollToTop');
-        
-        window.addEventListener('scroll', function() {
-            if (window.pageYOffset > 100) {
-                scrollToTopBtn.classList.add('show');
-            } else {
-                scrollToTopBtn.classList.remove('show');
-            }
-        });
-        
-        scrollToTopBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
     </script>
 </body>
 </html>
